@@ -14,6 +14,7 @@
 		130BACCA1FDC179900700896 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 130BACC81FDC179900700896 /* LaunchScreen.storyboard */; };
 		130BACD51FDC179A00700896 /* MMWheelViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 130BACD41FDC179A00700896 /* MMWheelViewTests.swift */; };
 		130BACE01FDC179A00700896 /* MMWheelViewUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 130BACDF1FDC179A00700896 /* MMWheelViewUITests.swift */; };
+		130BACEE1FDC18DA00700896 /* WheelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 130BACED1FDC18DA00700896 /* WheelView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -47,6 +48,7 @@
 		130BACDB1FDC179A00700896 /* MMWheelViewUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MMWheelViewUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		130BACDF1FDC179A00700896 /* MMWheelViewUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MMWheelViewUITests.swift; sourceTree = "<group>"; };
 		130BACE11FDC179A00700896 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		130BACED1FDC18DA00700896 /* WheelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WheelView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -103,6 +105,7 @@
 				130BACC61FDC179900700896 /* Assets.xcassets */,
 				130BACC81FDC179900700896 /* LaunchScreen.storyboard */,
 				130BACCB1FDC179900700896 /* Info.plist */,
+				130BACED1FDC18DA00700896 /* WheelView.swift */,
 			);
 			path = MMWheelView;
 			sourceTree = "<group>";
@@ -259,6 +262,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				130BACEE1FDC18DA00700896 /* WheelView.swift in Sources */,
 				130BACC21FDC179900700896 /* ViewController.swift in Sources */,
 				130BACC01FDC179900700896 /* AppDelegate.swift in Sources */,
 			);
