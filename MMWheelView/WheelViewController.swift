@@ -77,7 +77,7 @@ extension WheelViewController {
     }
 
     func wheelView(_ view: WheelView, basketForRowAt index: Int) -> Basket {
-        let basket = Basket(frame: CGRect(x: 0, y: 0, width: 50, height: 50))
+        let basket = Basket(frame: CGRect(x: 0, y: 0, width: 70, height: 70))
         basket.imageView.kf.setImage(with: URL(string: imageUrls[index])!,
                                      placeholder: UIImage(named: "no_img"))
         view.backgroundColor = .clear
