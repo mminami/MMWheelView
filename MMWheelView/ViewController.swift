@@ -13,17 +13,56 @@ import RxCocoa
 import SVProgressHUD
 
 class ViewController: UIViewController {
+    lazy var emailLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Email"
+        label.textColor = .white
+        label.textAlignment = .left
+        label.backgroundColor = .clear
+        return label
+    }()
+
     lazy var nameTextField: UITextField = {
         let textField = UITextField()
+        textField.becomeFirstResponder()
+        textField.placeholder = "Enter email"
         textField.backgroundColor = .white
         return textField
     }()
 
+    lazy var emailValidationLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Enter valid email address"
+        label.textColor = .red
+        label.textAlignment = .left
+        label.backgroundColor = .clear
+        return label
+    }()
+
+    lazy var passwordLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Password"
+        label.textColor = .white
+        label.textAlignment = .left
+        label.backgroundColor = .clear
+        return label
+    }()
+
     lazy var passworTextField: UITextField = {
         let textField = UITextField()
+        textField.placeholder = "Enter password"
         textField.backgroundColor = UIColor.white
         textField.isSecureTextEntry = true
         return textField
+    }()
+
+    lazy var passwordValidationLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Minimum password length is 5"
+        label.textColor = .red
+        label.textAlignment = .left
+        label.backgroundColor = .clear
+        return label
     }()
 
     lazy var loginButton: UIButton = {
@@ -52,25 +91,58 @@ class ViewController: UIViewController {
 
         view.backgroundColor = .black
 
+        view.addSubview(emailLabel)
         view.addSubview(nameTextField)
+        view.addSubview(emailValidationLabel)
+        view.addSubview(passwordLabel)
         view.addSubview(passworTextField)
+        view.addSubview(passwordValidationLabel)
         view.addSubview(loginButton)
 
-        nameTextField.snp.makeConstraints { [unowned self] make in
+        emailLabel.snp.makeConstraints { [unowned self] make in
             make.top.equalTo(self.view.safeAreaLayoutGuide).offset(50)
-            make.left.equalTo(self.view).offset(50)
-            make.right.equalTo(self.view).offset(-50)
+            make.left.equalTo(self.view).offset(70)
+            make.right.equalTo(self.view).offset(-70)
             make.height.equalTo(30)
         }
 
+        nameTextField.snp.makeConstraints { [unowned self] make in
+            make.top.equalTo(self.emailLabel.snp.bottom).offset(4)
+            make.left.equalTo(self.view).offset(70)
+            make.right.equalTo(self.view).offset(-70)
+            make.height.equalTo(30)
+        }
+
+        emailValidationLabel.snp.makeConstraints { [unowned self] make in
+            make.top.equalTo(self.nameTextField.snp.bottom).offset(2)
+            make.left.equalTo(self.nameTextField.snp.left)
+            make.right.equalTo(self.nameTextField.snp.right)
+            make.height.equalTo(self.nameTextField.snp.height)
+        }
+
+        passwordLabel.snp.makeConstraints { [unowned self] make in
+            make.top.equalTo(self.emailValidationLabel.snp.bottom).offset(4)
+            make.left.equalTo(self.emailLabel.snp.left)
+            make.right.equalTo(self.emailLabel.snp.right)
+            make.height.equalTo(self.emailLabel.snp.height)
+        }
+
         passworTextField.snp.makeConstraints { [unowned self] make in
-            make.top.equalTo(self.nameTextField).offset(50)
-            make.width.height.equalTo(self.nameTextField)
-            make.centerX.equalTo(self.nameTextField)
+            make.top.equalTo(self.passwordLabel.snp.bottom).offset(4)
+            make.width.equalTo(self.nameTextField.snp.width)
+            make.height.equalTo(self.nameTextField.snp.height)
+            make.centerX.equalTo(self.nameTextField.snp.centerX)
+        }
+
+        passwordValidationLabel.snp.makeConstraints { [unowned self] make in
+            make.top.equalTo(self.passworTextField.snp.bottom).offset(2)
+            make.left.equalTo(self.emailValidationLabel.snp.left)
+            make.right.equalTo(self.emailValidationLabel.snp.right)
+            make.height.equalTo(self.emailValidationLabel.snp.height)
         }
 
         loginButton.snp.makeConstraints { [unowned self] make in
-            make.bottom.equalTo(self.view).offset(-50)
+            make.top.equalTo(self.passwordValidationLabel.snp.bottom).offset(15)
             make.height.equalTo(44)
             make.left.equalTo(self.view).offset(50)
             make.right.equalTo(self.view).offset(-50)
@@ -93,6 +165,14 @@ class ViewController: UIViewController {
         let formIsValid = Observable.combineLatest(emailIsValid, passwordIsValid) {
             $0 && $1
             }.share(replay: 1)
+
+        emailIsValid
+            .bind(to: emailValidationLabel.rx.isHidden)
+            .disposed(by: disposeBag)
+
+        passwordIsValid
+            .bind(to: passwordValidationLabel.rx.isHidden)
+            .disposed(by: disposeBag)
 
         formIsValid.subscribe(onNext: { [unowned self] in
             self.loginButton.isEnabled = $0
