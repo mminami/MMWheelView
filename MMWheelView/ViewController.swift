@@ -22,11 +22,13 @@ class ViewController: UIViewController {
         return label
     }()
 
-    lazy var nameTextField: UITextField = {
+    lazy var emailTextField: UITextField = {
         let textField = UITextField()
         textField.becomeFirstResponder()
         textField.placeholder = "Enter email"
         textField.backgroundColor = .white
+        textField.autocapitalizationType = .none
+        textField.autocorrectionType = .no
         return textField
     }()
 
@@ -53,6 +55,8 @@ class ViewController: UIViewController {
         textField.placeholder = "Enter password"
         textField.backgroundColor = UIColor.white
         textField.isSecureTextEntry = true
+        textField.autocapitalizationType = .none
+        textField.autocorrectionType = .no
         return textField
     }()
 
@@ -94,7 +98,7 @@ class ViewController: UIViewController {
         view.backgroundColor = .black
 
         view.addSubview(emailLabel)
-        view.addSubview(nameTextField)
+        view.addSubview(emailTextField)
         view.addSubview(emailValidationLabel)
         view.addSubview(passwordLabel)
         view.addSubview(passworTextField)
@@ -108,7 +112,7 @@ class ViewController: UIViewController {
             make.height.equalTo(30)
         }
 
-        nameTextField.snp.makeConstraints { [unowned self] make in
+        emailTextField.snp.makeConstraints { [unowned self] make in
             make.top.equalTo(self.emailLabel.snp.bottom).offset(4)
             make.left.equalTo(self.view).offset(70)
             make.right.equalTo(self.view).offset(-70)
@@ -116,10 +120,10 @@ class ViewController: UIViewController {
         }
 
         emailValidationLabel.snp.makeConstraints { [unowned self] make in
-            make.top.equalTo(self.nameTextField.snp.bottom).offset(2)
-            make.left.equalTo(self.nameTextField.snp.left)
-            make.right.equalTo(self.nameTextField.snp.right)
-            make.height.equalTo(self.nameTextField.snp.height)
+            make.top.equalTo(self.emailTextField.snp.bottom).offset(2)
+            make.left.equalTo(self.emailTextField.snp.left)
+            make.right.equalTo(self.emailTextField.snp.right)
+            make.height.equalTo(self.emailTextField.snp.height)
         }
 
         passwordLabel.snp.makeConstraints { [unowned self] make in
@@ -131,9 +135,9 @@ class ViewController: UIViewController {
 
         passworTextField.snp.makeConstraints { [unowned self] make in
             make.top.equalTo(self.passwordLabel.snp.bottom).offset(4)
-            make.width.equalTo(self.nameTextField.snp.width)
-            make.height.equalTo(self.nameTextField.snp.height)
-            make.centerX.equalTo(self.nameTextField.snp.centerX)
+            make.width.equalTo(self.emailTextField.snp.width)
+            make.height.equalTo(self.emailTextField.snp.height)
+            make.centerX.equalTo(self.emailTextField.snp.centerX)
         }
 
         passwordValidationLabel.snp.makeConstraints { [unowned self] make in
@@ -150,13 +154,13 @@ class ViewController: UIViewController {
             make.right.equalTo(self.view).offset(-50)
         }
 
-        nameTextField.rx
+        emailTextField.rx
             .controlEvent([.editingDidEndOnExit])
             .subscribe(onNext: { [unowned self] text in
                 self.passworTextField.becomeFirstResponder()
             }).disposed(by: disposeBag)
 
-        let emailIsValid = nameTextField.rx.text.orEmpty.map { [unowned self] in
+        let emailIsValid = emailTextField.rx.text.orEmpty.map { [unowned self] in
             self.isValidEmail($0)
             }.share(replay: 1)
 
@@ -190,7 +194,7 @@ class ViewController: UIViewController {
 
             // Delay process to show loading indicator
             DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                MockLoginClient.shared.login(email: self.nameTextField.text ?? "",
+                MockLoginClient.shared.login(email: self.emailTextField.text ?? "",
                                              password: self.passworTextField.text ?? "",
                                              completion: { [unowned self] result in
                                                 switch result {
