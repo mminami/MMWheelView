@@ -186,6 +186,9 @@ class ViewController: UIViewController {
         }).disposed(by: disposeBag)
 
         loginButton.rx.tap.subscribe(onNext: { [unowned self] in
+            self.emailTextField.resignFirstResponder()
+            self.passworTextField.resignFirstResponder()
+
             DispatchQueue.main.async {
                 SVProgressHUD.setDefaultMaskType(.gradient)
                 SVProgressHUD.setMinimumDismissTimeInterval(self.progressDismissTimeinterval)
