@@ -13,6 +13,16 @@ import RxCocoa
 import SVProgressHUD
 
 class ViewController: UIViewController {
+    private let disposeBag = DisposeBag()
+
+    private let minimumPasswordLength = 5
+    private let emailValidationText = "Enter valid email address"
+    private var passwordValidationText: String {
+        return "Minimum password length is \(minimumPasswordLength)"
+    }
+
+    private let progressDismissTimeinterval = 1.0
+
     lazy var emailLabel: UILabel = {
         let label = UILabel()
         label.text = "Email"
@@ -78,16 +88,6 @@ class ViewController: UIViewController {
         return button
     }()
 
-    private let disposeBag = DisposeBag()
-
-    private let minimumPasswordLength = 5
-    private let emailValidationText = "Enter valid email address"
-    private var passwordValidationText: String {
-        return "Minimum password length is \(minimumPasswordLength)"
-    }
-
-    private let progressDismissTimeinterval = 1.0
-
     private func isValidEmail(_ text: String) -> Bool {
         let regex = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,64}"
         let predicate = NSPredicate(format: "SELF MATCHES %@", regex)
@@ -95,6 +95,10 @@ class ViewController: UIViewController {
     }
 
     private func setUpUI() {
+        navigationItem.title = "Login"
+
+        view.backgroundColor = .black
+
         view.addSubview(emailLabel)
         view.addSubview(emailTextField)
         view.addSubview(emailValidationLabel)
@@ -232,10 +236,6 @@ class ViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        navigationItem.title = "Login"
-
-        view.backgroundColor = .black
 
         setUpUI()
 
