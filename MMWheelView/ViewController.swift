@@ -34,7 +34,7 @@ class ViewController: UIViewController {
 
     lazy var emailValidationLabel: UILabel = {
         let label = UILabel()
-        label.text = "Enter valid email address"
+        label.text = emailValidationText
         label.textColor = .red
         label.textAlignment = .left
         label.backgroundColor = .clear
@@ -62,7 +62,7 @@ class ViewController: UIViewController {
 
     lazy var passwordValidationLabel: UILabel = {
         let label = UILabel()
-        label.text = "Minimum password length is 5"
+        label.text = passwordValidationText
         label.textColor = .red
         label.textAlignment = .left
         label.backgroundColor = .clear
@@ -81,6 +81,10 @@ class ViewController: UIViewController {
     private let disposeBag = DisposeBag()
 
     private let minimumPasswordLength = 5
+    private let emailValidationText = "Enter valid email address"
+    private var passwordValidationText: String {
+        return "Minimum password length is \(minimumPasswordLength)"
+    }
 
     private let progressDismissTimeinterval = 1.0
 
@@ -90,13 +94,7 @@ class ViewController: UIViewController {
         return predicate.evaluate(with: text)
     }
 
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
-        navigationItem.title = "Login"
-
-        view.backgroundColor = .black
-
+    private func setUpUI() {
         view.addSubview(emailLabel)
         view.addSubview(emailTextField)
         view.addSubview(emailValidationLabel)
@@ -153,13 +151,9 @@ class ViewController: UIViewController {
             make.left.equalTo(self.view).offset(50)
             make.right.equalTo(self.view).offset(-50)
         }
+    }
 
-        emailTextField.rx
-            .controlEvent([.editingDidEndOnExit])
-            .subscribe(onNext: { [unowned self] text in
-                self.passworTextField.becomeFirstResponder()
-            }).disposed(by: disposeBag)
-
+    private func setUpDeclaration() {
         let emailIsValid = emailTextField.rx.text.orEmpty.map { [unowned self] in
             self.isValidEmail($0)
             }.share(replay: 1)
@@ -185,46 +179,67 @@ class ViewController: UIViewController {
             self.loginButton.backgroundColor = $0 ? .orange : .lightGray
         }).disposed(by: disposeBag)
 
-        loginButton.rx.tap.subscribe(onNext: { [unowned self] in
-            self.emailTextField.resignFirstResponder()
-            self.passworTextField.resignFirstResponder()
+        emailTextField.rx
+            .controlEvent([.editingDidEndOnExit])
+            .subscribe(onNext: { [unowned self] text in
+                self.passworTextField.becomeFirstResponder()
+            }).disposed(by: disposeBag)
 
-            DispatchQueue.main.async {
-                SVProgressHUD.setDefaultMaskType(.gradient)
-                SVProgressHUD.setMinimumDismissTimeInterval(self.progressDismissTimeinterval)
-                SVProgressHUD.show()
-            }
+        loginButton.rx
+            .tap
+            .subscribe(onNext: { [unowned self] in
+                self.emailTextField.resignFirstResponder()
+                self.passworTextField.resignFirstResponder()
 
-            // Delay process to show loading indicator
-            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                MockLoginClient.shared.login(email: self.emailTextField.text ?? "",
-                                             password: self.passworTextField.text ?? "",
-                                             completion: { [unowned self] result in
-                                                switch result {
-                                                case .success:
-                                                    DispatchQueue.main.async {
-                                                        SVProgressHUD.dismiss()
-                                                        SVProgressHUD.showSuccess(withStatus: "Success to authenticate")
+                DispatchQueue.main.async {
+                    SVProgressHUD.setDefaultMaskType(.gradient)
+                    SVProgressHUD.setMinimumDismissTimeInterval(self.progressDismissTimeinterval)
+                    SVProgressHUD.show()
+                }
 
-                                                        DispatchQueue.main.asyncAfter(deadline: .now() + self.progressDismissTimeinterval) {
-                                                            SVProgressHUD.dismiss()
+                // Delay process to show loading indicator
+                DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                    MockLoginClient.shared.login(
+                        email: self.emailTextField.text ?? "",
+                        password: self.passworTextField.text ?? "",
+                        completion: { [unowned self] result in
+                            switch result {
+                            case .success:
+                                DispatchQueue.main.async {
+                                    SVProgressHUD.dismiss()
+                                    SVProgressHUD.showSuccess(withStatus: "Success to authenticate")
 
-                                                            let vc = WheelViewController()
-                                                            let navigationVC = UINavigationController(rootViewController: vc)
-                                                            navigationVC.navigationBar.barStyle = .black
-                                                            navigationVC.navigationBar.isTranslucent = true
-                                                            self.present(navigationVC, animated: true, completion: nil)
-                                                        }
-                                                    }
-                                                case .failure:
-                                                    DispatchQueue.main.async {
-                                                        SVProgressHUD.dismiss()
-                                                        SVProgressHUD.showError(withStatus: "Failed to authenticate")
-                                                    }
-                                                }
-                })
-            }
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + self.progressDismissTimeinterval) {
+                                        SVProgressHUD.dismiss()
+
+                                        let vc = WheelViewController()
+                                        let navigationVC = UINavigationController(rootViewController: vc)
+                                        navigationVC.navigationBar.barStyle = .black
+                                        navigationVC.navigationBar.isTranslucent = true
+                                        self.present(navigationVC, animated: true, completion: nil)
+                                    }
+                                }
+                            case .failure:
+                                DispatchQueue.main.async {
+                                    SVProgressHUD.dismiss()
+                                    SVProgressHUD.showError(withStatus: "Failed to authenticate")
+                                }
+                            }
+                    })
+                }
         }).disposed(by: disposeBag)
+    }
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        navigationItem.title = "Login"
+
+        view.backgroundColor = .black
+
+        setUpUI()
+
+        setUpDeclaration()
     }
 
     override func didReceiveMemoryWarning() {
