@@ -21,6 +21,8 @@
 		131FC5551FDD32A400AB03A1 /* RxCocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 131FC5471FDD213500AB03A1 /* RxCocoa.framework */; };
 		131FC5561FDD32A400AB03A1 /* RxSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 131FC5441FDD213500AB03A1 /* RxSwift.framework */; };
 		131FC5581FDD32A400AB03A1 /* MBProgressHUD.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 131FC5571FDD32A400AB03A1 /* MBProgressHUD.framework */; };
+		131FC55A1FDD373900AB03A1 /* WheelViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 131FC5591FDD373900AB03A1 /* WheelViewController.swift */; };
+		131FC55C1FDD3F3100AB03A1 /* LoginClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 131FC55B1FDD3F3100AB03A1 /* LoginClient.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -61,6 +63,8 @@
 		131FC5471FDD213500AB03A1 /* RxCocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxCocoa.framework; path = Carthage/Build/iOS/RxCocoa.framework; sourceTree = "<group>"; };
 		131FC5511FDD290B00AB03A1 /* Kingfisher.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Kingfisher.framework; path = Carthage/Build/iOS/Kingfisher.framework; sourceTree = "<group>"; };
 		131FC5571FDD32A400AB03A1 /* MBProgressHUD.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MBProgressHUD.framework; path = Carthage/Build/iOS/MBProgressHUD.framework; sourceTree = "<group>"; };
+		131FC5591FDD373900AB03A1 /* WheelViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WheelViewController.swift; sourceTree = "<group>"; };
+		131FC55B1FDD3F3100AB03A1 /* LoginClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginClient.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -125,6 +129,8 @@
 				130BACC81FDC179900700896 /* LaunchScreen.storyboard */,
 				130BACCB1FDC179900700896 /* Info.plist */,
 				130BACED1FDC18DA00700896 /* WheelView.swift */,
+				131FC5591FDD373900AB03A1 /* WheelViewController.swift */,
+				131FC55B1FDD3F3100AB03A1 /* LoginClient.swift */,
 			);
 			path = MMWheelView;
 			sourceTree = "<group>";
@@ -324,6 +330,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				131FC55A1FDD373900AB03A1 /* WheelViewController.swift in Sources */,
+				131FC55C1FDD3F3100AB03A1 /* LoginClient.swift in Sources */,
 				130BACEE1FDC18DA00700896 /* WheelView.swift in Sources */,
 				130BACC21FDC179900700896 /* ViewController.swift in Sources */,
 				130BACC01FDC179900700896 /* AppDelegate.swift in Sources */,

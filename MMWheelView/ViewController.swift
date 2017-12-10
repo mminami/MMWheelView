@@ -52,20 +52,20 @@ class ViewController: UIViewController {
         view.addSubview(passworTextField)
         view.addSubview(loginButton)
 
-        nameTextField.snp.makeConstraints { make in
+        nameTextField.snp.makeConstraints { [unowned self] make in
             make.top.equalTo(self.view.safeAreaLayoutGuide).offset(50)
             make.left.equalTo(self.view).offset(50)
             make.right.equalTo(self.view).offset(-50)
             make.height.equalTo(30)
         }
 
-        passworTextField.snp.makeConstraints { make in
-            make.top.equalTo(nameTextField).offset(50)
-            make.width.height.equalTo(nameTextField)
-            make.centerX.equalTo(nameTextField)
+        passworTextField.snp.makeConstraints { [unowned self] make in
+            make.top.equalTo(self.nameTextField).offset(50)
+            make.width.height.equalTo(self.nameTextField)
+            make.centerX.equalTo(self.nameTextField)
         }
 
-        loginButton.snp.makeConstraints { make in
+        loginButton.snp.makeConstraints { [unowned self] make in
             make.bottom.equalTo(self.view).offset(-50)
             make.height.equalTo(44)
             make.left.equalTo(self.view).offset(50)
@@ -95,7 +95,11 @@ class ViewController: UIViewController {
             self.loginButton.backgroundColor = $0 ? .orange : .lightGray
         }).disposed(by: disposeBag)
 
-        loginButton.rx.tap.subscribe(onNext: {}).disposed(by: disposeBag)
+        loginButton.rx.tap.subscribe(onNext: { [unowned self] in
+            let vc = WheelViewController()
+            let navigationVC = UINavigationController(rootViewController: vc)
+            self.present(navigationVC, animated: true, completion: nil)
+        }).disposed(by: disposeBag)
     }
 
     override func didReceiveMemoryWarning() {

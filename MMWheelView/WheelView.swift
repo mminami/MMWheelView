@@ -19,7 +19,22 @@ func degreeToRadian(_ degree: Double) -> Double {
 }
 
 public class Basket: UIView {
+    lazy var imageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.contentMode = .scaleAspectFit
+        return imageView
+    }()
 
+    public override init(frame: CGRect) {
+        super.init(frame: frame)
+
+        addSubview(imageView)
+        imageView.frame = frame
+    }
+
+    public required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+    }
 }
 
 class RotationView: UIView {
