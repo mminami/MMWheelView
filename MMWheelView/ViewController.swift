@@ -23,7 +23,7 @@ class ViewController: UIViewController {
 
     private let progressDismissTimeinterval = 1.0
 
-    lazy var emailLabel: UILabel = {
+    private lazy var emailLabel: UILabel = {
         let label = UILabel()
         label.text = "Email"
         label.textColor = .white
@@ -32,7 +32,7 @@ class ViewController: UIViewController {
         return label
     }()
 
-    lazy var emailTextField: UITextField = {
+    private lazy var emailTextField: UITextField = {
         let textField = UITextField()
         textField.becomeFirstResponder()
         textField.placeholder = "Enter email"
@@ -42,7 +42,7 @@ class ViewController: UIViewController {
         return textField
     }()
 
-    lazy var emailValidationLabel: UILabel = {
+    private lazy var emailValidationLabel: UILabel = {
         let label = UILabel()
         label.text = emailValidationText
         label.textColor = .red
@@ -51,7 +51,7 @@ class ViewController: UIViewController {
         return label
     }()
 
-    lazy var passwordLabel: UILabel = {
+    private lazy var passwordLabel: UILabel = {
         let label = UILabel()
         label.text = "Password"
         label.textColor = .white
@@ -60,7 +60,7 @@ class ViewController: UIViewController {
         return label
     }()
 
-    lazy var passworTextField: UITextField = {
+    private lazy var passworTextField: UITextField = {
         let textField = UITextField()
         textField.placeholder = "Enter password"
         textField.backgroundColor = UIColor.white
@@ -70,7 +70,7 @@ class ViewController: UIViewController {
         return textField
     }()
 
-    lazy var passwordValidationLabel: UILabel = {
+    private lazy var passwordValidationLabel: UILabel = {
         let label = UILabel()
         label.text = passwordValidationText
         label.textColor = .red
@@ -79,13 +79,31 @@ class ViewController: UIViewController {
         return label
     }()
 
-    lazy var loginButton: UIButton = {
+    private lazy var loginButton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("Login", for: .normal)
         button.setTitleColor(.white, for: .normal)
         button.backgroundColor = .lightGray
         button.isEnabled = false
         return button
+    }()
+
+    private lazy var emailIsValid: Observable<Bool> = {
+        return emailTextField.rx.text.orEmpty.map { [unowned self] in
+            self.isValidEmail($0)
+            }.share(replay: 1)
+    }()
+
+    private lazy var passwordIsValid: Observable<Bool> = {
+        return passworTextField.rx.text.orEmpty.map { [unowned self] in
+            $0.count >= self.minimumPasswordLength
+            }.share(replay: 1)
+    }()
+
+    private lazy var formIsValid: Observable<Bool> = {
+        return Observable.combineLatest(emailIsValid, passwordIsValid) {
+            $0 && $1
+            }.share(replay: 1)
     }()
 
     private func isValidEmail(_ text: String) -> Bool {
@@ -158,18 +176,6 @@ class ViewController: UIViewController {
     }
 
     private func setUpDeclaration() {
-        let emailIsValid = emailTextField.rx.text.orEmpty.map { [unowned self] in
-            self.isValidEmail($0)
-            }.share(replay: 1)
-
-        let passwordIsValid = passworTextField.rx.text.orEmpty.map { [unowned self] in
-            $0.count >= self.minimumPasswordLength
-            }.share(replay: 1)
-
-        let formIsValid = Observable.combineLatest(emailIsValid, passwordIsValid) {
-            $0 && $1
-            }.share(replay: 1)
-
         emailIsValid
             .bind(to: emailValidationLabel.rx.isHidden)
             .disposed(by: disposeBag)
