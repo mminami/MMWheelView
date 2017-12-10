@@ -10,6 +10,7 @@ import UIKit
 import SnapKit
 import RxSwift
 import RxCocoa
+import SVProgressHUD
 
 class ViewController: UIViewController {
     lazy var nameTextField: UITextField = {
@@ -21,6 +22,7 @@ class ViewController: UIViewController {
     lazy var passworTextField: UITextField = {
         let textField = UITextField()
         textField.backgroundColor = UIColor.white
+        textField.isSecureTextEntry = true
         return textField
     }()
 
@@ -36,6 +38,8 @@ class ViewController: UIViewController {
     private let disposeBag = DisposeBag()
 
     private let minimumPasswordLength = 5
+
+    private let progressDismissTimeinterval = 1.0
 
     private func isValidEmail(_ text: String) -> Bool {
         let regex = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,64}"
@@ -83,7 +87,7 @@ class ViewController: UIViewController {
             }.share(replay: 1)
 
         let passwordIsValid = passworTextField.rx.text.orEmpty.map { [unowned self] in
-            $0.count > self.minimumPasswordLength
+            $0.count >= self.minimumPasswordLength
             }.share(replay: 1)
 
         let formIsValid = Observable.combineLatest(emailIsValid, passwordIsValid) {
@@ -96,9 +100,39 @@ class ViewController: UIViewController {
         }).disposed(by: disposeBag)
 
         loginButton.rx.tap.subscribe(onNext: { [unowned self] in
-            let vc = WheelViewController()
-            let navigationVC = UINavigationController(rootViewController: vc)
-            self.present(navigationVC, animated: true, completion: nil)
+            DispatchQueue.main.async {
+                SVProgressHUD.setDefaultMaskType(.gradient)
+                SVProgressHUD.setMinimumDismissTimeInterval(self.progressDismissTimeinterval)
+                SVProgressHUD.show()
+            }
+
+            // Delay process to show loading indicator
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                MockLoginClient.shared.login(email: self.nameTextField.text ?? "",
+                                             password: self.passworTextField.text ?? "",
+                                             completion: { [unowned self] result in
+                                                switch result {
+                                                case .success:
+                                                    DispatchQueue.main.async {
+                                                        SVProgressHUD.dismiss()
+                                                        SVProgressHUD.showSuccess(withStatus: "Success to authenticate")
+
+                                                        DispatchQueue.main.asyncAfter(deadline: .now() + self.progressDismissTimeinterval) {
+                                                            SVProgressHUD.dismiss()
+
+                                                            let vc = WheelViewController()
+                                                            let navigationVC = UINavigationController(rootViewController: vc)
+                                                            self.present(navigationVC, animated: true, completion: nil)
+                                                        }
+                                                    }
+                                                case .failure:
+                                                    DispatchQueue.main.async {
+                                                        SVProgressHUD.dismiss()
+                                                        SVProgressHUD.showError(withStatus: "Failed to authenticate")
+                                                    }
+                                                }
+                })
+            }
         }).disposed(by: disposeBag)
     }
 
