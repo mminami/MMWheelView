@@ -8,6 +8,8 @@
 
 import UIKit
 import SnapKit
+import RxSwift
+import RxCocoa
 
 class ViewController: UIViewController {
     lazy var nameTextField: UITextField = {
@@ -27,8 +29,19 @@ class ViewController: UIViewController {
         button.setTitle("Login", for: .normal)
         button.setTitleColor(.white, for: .normal)
         button.backgroundColor = .lightGray
+        button.isEnabled = false
         return button
     }()
+
+    private let disposeBag = DisposeBag()
+
+    private let minimumPasswordLength = 5
+
+    private func isValidEmail(_ text: String) -> Bool {
+        let regex = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,64}"
+        let predicate = NSPredicate(format: "SELF MATCHES %@", regex)
+        return predicate.evaluate(with: text)
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -58,6 +71,31 @@ class ViewController: UIViewController {
             make.left.equalTo(self.view).offset(50)
             make.right.equalTo(self.view).offset(-50)
         }
+
+        nameTextField.rx
+            .controlEvent([.editingDidEndOnExit])
+            .subscribe(onNext: { [unowned self] text in
+                self.passworTextField.becomeFirstResponder()
+            }).disposed(by: disposeBag)
+
+        let emailIsValid = nameTextField.rx.text.orEmpty.map { [unowned self] in
+            self.isValidEmail($0)
+            }.share(replay: 1)
+
+        let passwordIsValid = passworTextField.rx.text.orEmpty.map { [unowned self] in
+            $0.count > self.minimumPasswordLength
+            }.share(replay: 1)
+
+        let formIsValid = Observable.combineLatest(emailIsValid, passwordIsValid) {
+            $0 && $1
+            }.share(replay: 1)
+
+        formIsValid.subscribe(onNext: { [unowned self] in
+            self.loginButton.isEnabled = $0
+            self.loginButton.backgroundColor = $0 ? .orange : .lightGray
+        }).disposed(by: disposeBag)
+
+        loginButton.rx.tap.subscribe(onNext: {}).disposed(by: disposeBag)
     }
 
     override func didReceiveMemoryWarning() {
