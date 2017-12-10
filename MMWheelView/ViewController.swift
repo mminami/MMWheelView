@@ -89,6 +89,8 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        navigationItem.title = "Login"
+
         view.backgroundColor = .black
 
         view.addSubview(emailLabel)
@@ -202,6 +204,8 @@ class ViewController: UIViewController {
 
                                                             let vc = WheelViewController()
                                                             let navigationVC = UINavigationController(rootViewController: vc)
+                                                            navigationVC.navigationBar.barStyle = .black
+                                                            navigationVC.navigationBar.isTranslucent = true
                                                             self.present(navigationVC, animated: true, completion: nil)
                                                         }
                                                     }
